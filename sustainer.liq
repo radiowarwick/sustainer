@@ -17,7 +17,7 @@ def log_track(m) =
     artist = m["artist"]
     
     # Send a post request to our lovely server
-    result = http.post(headers=[("Content-Type","application/x-www-form-urlencoded")], data="title=#{title}&artist=#{artist}&location=0", "http://digiplay/api/log?key=#{api_key}")
+    result = http.post(headers=[("Content-Type","application/x-www-form-urlencoded")], data="title=#{title}&artist=#{artist}&location=0", "#{base_url}/api/log?key=#{api_key}")
     
     # log the result and say what is playing
     print("#{snd(result)}")
