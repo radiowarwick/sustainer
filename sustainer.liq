@@ -47,11 +47,9 @@ radio = fallback(track_sensitive=false, [added_precord, blank()])
 # Equalize the audio
 radio = amplify(1., radio)
 
-# TODO: Add output methods
-
-output.pulseaudio(radio)
-
 # All shamelessly stolen from the old Marceline
+# NOTE: All beyond this point is for the output system.
+
 if enable_mp3 == true then
 	ignore(output.icecast(
   		%mp3(bitrate = 256), 
@@ -83,6 +81,6 @@ if output_jack == true then
 end
 
 if output_pulseaudio == true then
-  ignore(output.pulseaudio(client="Marceline", radio))
+  ignore(output.pulseaudio(client="Sustainer", radio))
   log(label="pulseaudio", level=1, "PulseAudio output started")
 end
