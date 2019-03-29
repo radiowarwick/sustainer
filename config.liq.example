@@ -8,6 +8,12 @@ b_list = "2"
 c_list = "13"
 sue_list = "0"
 
+# Playlist weights
+a_weight = 3
+b_weight = 2
+c_weight = 1
+sue_weight = 6
+
 # Icecast stream
 icecast_host = ""
 icecast_port = 80

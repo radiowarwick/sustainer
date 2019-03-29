@@ -20,30 +20,36 @@ def log_track(m) =
     result = http.post(headers=[("Content-Type","application/x-www-form-urlencoded")], data="title=#{title}&artist=#{artist}&location=0", "#{base_url}/api/log?key=#{api_key}")
     
     # log the result and say what is playing
-    print("#{snd(result)}")
-    print("NOW PLAYING: #{artist} - #{title}")
+    log(label="normal", "NOW PLAYING: #{artist} - #{title}")
+    log(label="normal", "LOG POST: #{snd(result)}")
 end
 
-# For every 4 SUE songs we'll get
-# 2 A List songs
-# 2 B List songs
-# 1 C List songs
-# Just so we can get some "new" music playing on sue
-playlists = random(weights=[2,2,1,4], [playlist_a, playlist_b, playlist_c, playlist_sue])
+
+
+# Weight/ratios are pulled from the config file
+playlists = random(weights=[a_weight, b_weight, c_weight, sue_weight], [playlist_a, playlist_b, playlist_c, playlist_sue])
 # Add logging handle
 playlists = on_metadata(log_track, playlists)
+# Add a smart crossfade
+playlists = smart_crossfade(width=3.0, high=-5.0, medium=-20.0, playlists)
 
 # Every 2 songs we'll play one jingle
-added_jingles = rotate(weights=[3,1], [playlists, jingles])
+main_feed = rotate(weights=[3,1], [playlists, jingles])
+# Add the emergency track (TODO: when i can figure out the weird issues with it)
+main_feed = fallback(track_sensitive=false, [main_feed, blank()])
 
 # This will add our precord, if one exists in the playlist
-# This runs at thirty seconds past every hour
-added_precord = smooth_add(p=0.0, normal=added_jingles, special=switch([
-    ({0m30s}, prerecord)
-]))
+# This runs ten seconds into every hour, it will override any currently
+# Playing prerecord or song
+prerecord' = switch([
+    ({0m10s}, prerecord)
+])
 
-# Fallback to an emergency static playlist incase there are network issues
-radio = fallback(track_sensitive=false, [added_precord, blank()])
+
+# First a prerecord will be played (if there is one)
+# Then the normal sue service `added_jingles`
+# Then if that has failed play the emergency single
+radio = fallback(track_sensitive=false, [prerecord', main_feed])
 # Equalize the audio
 radio = amplify(1., radio)
 
@@ -51,36 +57,36 @@ radio = amplify(1., radio)
 # NOTE: All beyond this point is for the output system.
 
 if enable_mp3 == true then
-	ignore(output.icecast(
-  		%mp3(bitrate = 256), 
-  		mount = "#{icecast_mount}.mp3",
-  		host = icecast_host, port = icecast_port, password = icecast_password,
-  		url = icecast_url, name = icecast_name, description = icecast_description,
-  		radio))
-  log(label="icecast", level=1, "MP3 streaming started: http://#{icecast_host}:#{icecast_port}/#{icecast_mount}.mp3")
+    ignore(output.icecast(
+  	    %mp3(bitrate = 256),
+  	    mount = "#{icecast_mount}.mp3",
+  	    host = icecast_host, port = icecast_port, password = icecast_password,
+  	    url = icecast_url, name = icecast_name, description = icecast_description,
+  	    radio))
+    log(label="icecast", level=1, "MP3 streaming started: http://#{icecast_host}:#{icecast_port}/#{icecast_mount}.mp3")
 end
 
 if enable_flac == true then
-	ignore(output.icecast(
-  		%ogg(%flac(compression = 7)), 
-  		mount = "#{icecast_mount}.flac",
-  		host = icecast_host, port = icecast_port, password = icecast_password,
-  		url = icecast_url, name = icecast_name, description = icecast_description,
-  		radio))
-  log(label="icecast", level=1, "FLAC streaming started: http://#{icecast_host}:#{icecast_port}/#{icecast_mount}.flac")
+    ignore(output.icecast(
+        %ogg(%flac(compression = 7)), 
+        mount = "#{icecast_mount}.flac",
+        host = icecast_host, port = icecast_port, password = icecast_password,
+        url = icecast_url, name = icecast_name, description = icecast_description,
+        radio))
+    log(label="icecast", level=1, "FLAC streaming started: http://#{icecast_host}:#{icecast_port}/#{icecast_mount}.flac")
 end
 
 if output_alsa == true then
-  ignore(output.alsa(radio))
-  log(label="alsa", level=1, "ALSA output started")
+    ignore(output.alsa(radio))
+    log(label="alsa", level=1, "ALSA output started")
 end
 
 if output_jack == true then
-  ignore(output.jack(radio))
-  log(label="jack", level=1, "JACK output started")
+    ignore(output.jack(radio))
+    log(label="jack", level=1, "JACK output started")
 end
 
 if output_pulseaudio == true then
-  ignore(output.pulseaudio(client="Sustainer", radio))
-  log(label="pulseaudio", level=1, "PulseAudio output started")
+    ignore(output.pulseaudio(client="Sustainer", radio))
+    log(label="pulseaudio", level=1, "PulseAudio output started")
 end
