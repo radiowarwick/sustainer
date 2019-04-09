@@ -1,2 +1,5 @@
-config.liq
+script/config.liq
+script/sustainer-run.liq
 *.flac
+log/
+pid/

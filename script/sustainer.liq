@@ -31,9 +31,10 @@ playlists = random(weights=[a_weight, b_weight, c_weight, sue_weight], [playlist
 # Add logging handle
 playlists = on_metadata(log_track, playlists)
 # Add a smart crossfade
-playlists = smart_crossfade(width=3.0, high=-5.0, medium=-20.0, playlists)
+# NOTE: Disabled as, for some reason, it stops jingles from playing
+# playlists = smart_crossfade(width=3.0, high=-5.0, medium=-20.0, playlists)
 
-# Every 2 songs we'll play one jingle
+# Every 3 songs we'll play one jingle
 main_feed = rotate(weights=[3,1], [playlists, jingles])
 # Add the emergency track (TODO: when i can figure out the weird issues with it)
 main_feed = fallback(track_sensitive=false, [main_feed, blank()])
