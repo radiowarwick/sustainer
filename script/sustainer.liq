@@ -9,7 +9,7 @@ playlist_c = playlist(id="C List", mime_type="application/x-mpegURL", "#{base_ur
 playlist_sue = playlist(id="SUE List", mime_type="application/x-mpegURL", "#{base_url}/api/playlist?key=#{api_key}&id=#{sue_list}&format=m3u", reload=3600)
 jingles = playlist(id="Jingles", mime_type="application/x-mpegURL", "#{base_url}/api/playlist/jingles?key=#{api_key}&format=m3u", reload=3600)
 # Offset parameter in the URL means we'll get the playlist for the NEXT hour
-prerecord = playlist(id="Prerec", mime_type="application/x-mpegURL", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=3600)
+prerecord = playlist(id="Prerec", mime_type="application/x-mpegURL", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
 
 # Log the tracks metadata, m is an associative array
 def log_track(m) =
@@ -34,16 +34,16 @@ playlists = on_metadata(log_track, playlists)
 # NOTE: Disabled as, for some reason, it stops jingles from playing
 # playlists = smart_crossfade(width=3.0, high=-5.0, medium=-20.0, playlists)
 
-# Every 3 songs we'll play one jingle
-main_feed = rotate(weights=[3,1], [playlists, jingles])
+# Every 2 songs we'll play one jingle
+main_feed = rotate(weights=[2,1], [playlists, jingles])
 # Add the emergency track (TODO: when i can figure out the weird issues with it)
 main_feed = fallback(track_sensitive=false, [main_feed, blank()])
 
 # This will add our precord, if one exists in the playlist
-# This runs ten seconds into every hour, it will override any currently
+# This runs at the start of every hour, it will override any currently
 # Playing prerecord or song
 prerecord' = switch([
-    ({0m10s}, prerecord)
+    ({0m0s}, prerecord)
 ])
 
 
