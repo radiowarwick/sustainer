@@ -14,6 +14,12 @@ b_weight = 2
 c_weight = 1
 sue_weight = 6
 
+# Harbor connection
+harbor_mountpoint   = "ob"
+harbor_port         = 8080
+harbor_username     = "username"
+harbor_password     = "password"
+
 # Icecast stream
 icecast_host = ""
 icecast_port = 80

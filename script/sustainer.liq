@@ -46,11 +46,17 @@ prerecord' = switch([
     ({0m0s}, prerecord)
 ])
 
+def ob_auth(username, password) =
+    (username == harbor_username) and (password == harbor_password)
+end
+
+# Outside Broadcast harbor stream, using Icecast protocol
+ob = input.harbor(harbor_mountpoint, port=harbor_port, auth=ob_auth, icy=true)
 
 # First a prerecord will be played (if there is one)
 # Then the normal sue service `added_jingles`
 # Then if that has failed play the emergency single
-radio = fallback(track_sensitive=false, [prerecord', main_feed])
+radio = fallback(track_sensitive=false, [ob, prerecord', main_feed])
 # Equalize the audio
 radio = amplify(1., radio)
 
