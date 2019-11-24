@@ -18,9 +18,9 @@ The Sustainer is run through a docker container, and allows you to have phyiscal
 First make a copy of `config.liq.example` and fill it in with your config information. (API key, Icecast information, weightings, etc.)
 
 The most basic execution of the container is as follows:
-`docker run --device /dev/snd --group-add audio -v /mnt/dps0-0:/mnt/dps0-0:ro -v /path/to/my/config.liq:/sustainer/config.liq -v /var/sustainer.log:/var/log/liquidsoap/sustainer.log raw1251am/sustainer`
+`docker run --device /dev/snd -v /mnt/dps0-0:/mnt/dps0-0:ro -v /path/to/my/config.liq:/sustainer/config.liq -v /var/sustainer.log:/var/log/liquidsoap/sustainer.log raw1251am/sustainer`
 
-`--device /dev/snd --group-add audio` This gives the container access to the host's sound device and gives the container audio group permissions.
+`--device /dev/snd` This gives the container access to the host's sound device.
 
 `-v /mnt/dps0-0:/mnt/dps0-0` Mounts the audio file system, change left hand side if your audio is mounted in a different location.
 

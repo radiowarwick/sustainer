@@ -11,10 +11,13 @@ RUN apt update && \
 RUN touch /var/log/liquidsoap/sustainer.log && \
     chmod 777 /var/log/liquidsoap/sustainer.log
 
+RUN useradd user && \
+    usermod -aG audio user
+
 EXPOSE 8080
 
 COPY . .
 
-USER nobody
+USER user
 
 CMD ["liquidsoap", "sustainer.liq"]
