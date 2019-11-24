@@ -1,0 +1,37 @@
+# Digiplay connection
+api_key = ""
+base_url = "https://digiplay.radio.warwick.ac.uk"
+
+# Playlist IDs
+a_list = "1"
+b_list = "2"
+c_list = "13"
+sue_list = "0"
+
+# Playlist weights
+a_weight = 3
+b_weight = 2
+c_weight = 1
+sue_weight = 6
+
+# Harbor connection
+harbor_mountpoint   = "ob"
+harbor_username     = "username"
+harbor_password     = "password"
+
+# Icecast stream
+icecast_host = ""
+icecast_port = 80
+icecast_password = ""
+icecast_mount = "sustainer"
+icecast_name = "Sustainer Service"
+icecast_description = "RAW 1251AM Non-stop Jukebox"
+icecast_url = "https://github.com/radiowarwick/sustainer/"
+
+# Icecast broadcasting
+enable_mp3 = true
+enable_flac = true
+
+# Physical output
+output_alsa = true
+output_jack = false
