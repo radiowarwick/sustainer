@@ -18,6 +18,7 @@ sue_weight = 6
 harbor_mountpoint   = "ob"
 harbor_username     = "username"
 harbor_password     = "password"
+harbor_port         = 8000
 
 # Icecast stream
 icecast_host = ""

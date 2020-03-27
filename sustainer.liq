@@ -5,13 +5,13 @@
 set("log.stdout", true)
 
 # Load in all the playlists that we will need
-playlist_a = playlist(id="A List", mime_type="application/x-mpegURL", "#{base_url}/api/playlist?key=#{api_key}&id=#{a_list}&format=m3u", reload=3600)
-playlist_b = playlist(id="B List", mime_type="application/x-mpegURL", "#{base_url}/api/playlist?key=#{api_key}&id=#{b_list}&format=m3u", reload=3600)
-playlist_c = playlist(id="C List", mime_type="application/x-mpegURL", "#{base_url}/api/playlist?key=#{api_key}&id=#{c_list}&format=m3u", reload=3600)
-playlist_sue = playlist(id="SUE List", mime_type="application/x-mpegURL", "#{base_url}/api/playlist?key=#{api_key}&id=#{sue_list}&format=m3u", reload=3600)
-jingles = playlist(id="Jingles", mime_type="application/x-mpegURL", "#{base_url}/api/playlist/jingles?key=#{api_key}&format=m3u", reload=3600)
+playlist_a = playlist(id="A List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{a_list}&format=pls", reload=3600)
+playlist_b = playlist(id="B List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{b_list}&format=pls", reload=3600)
+playlist_c = playlist(id="C List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{c_list}&format=pls", reload=3600)
+playlist_sue = playlist(id="SUE List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{sue_list}&format=pls", reload=3600)
+jingles = playlist(id="Jingles", mime_type="audio/x-scpls", "#{base_url}/api/playlist/jingles?key=#{api_key}&format=pls", reload=3600)
 # Offset parameter in the URL means we'll get the playlist for the NEXT hour
-prerecord = playlist(id="Prerec", mime_type="application/x-mpegURL", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
+prerecord = playlist(id="Prerec", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
 
 # Log the tracks metadata, m is an associative array
 def log_track(m) =
@@ -53,7 +53,7 @@ def ob_auth(username, password) =
 end
 
 # Outside Broadcast harbor stream, using Icecast protocol
-ob = input.harbor(harbor_mountpoint, port=8080, auth=ob_auth, icy=true)
+ob = input.harbor(harbor_mountpoint, port=harbor_port, auth=ob_auth, icy=true)
 
 # First a prerecord will be played (if there is one)
 # Then the normal sue service `added_jingles`
