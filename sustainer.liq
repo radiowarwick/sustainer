@@ -1,6 +1,6 @@
 #!/usr/bin/liquidsoap -v
 
-%include "config.liq"
+%include "sustainer.config"
 
 set("log.stdout", true)
 
