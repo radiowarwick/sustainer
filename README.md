@@ -7,11 +7,21 @@ This is a new version of the sustainer system which uses `liquidsoap`. This uses
 1. Make sure you have `liquidsoap` installed
 2. `git clone https://github.com/radiowarwick/sustainer.git`
 3. `cd sustainer`
-4. `cp config.liq.example config.liq`
-5. Fill `config.liq` with configuration values
-6. Run using `liquidsoap script/sustainer.liq`
+4. `cp sutainer.config.example sustainer.config`
+5. Fill `sustainer.config` with configuration values
+6. Run using `liquidsoap sustainer.liq`
 
-## Installing in production
+## Installing in production (liqudsoap dameon)
+
+If you would like to install the sustainer to be run using liquidsoap's built in daemon then you'll need to do the following.
+
+```bash
+ln -s $(pwd)/sustainer.liq /etc/liquidsoap/sustainer.liq
+ln -s $(pwd)/sustainer.config /etc/liquidsoap/sustainer.config
+systemctl restart liquidsoap
+```
+
+## Installing in production (docker)
 
 The Sustainer is run through a docker container, and allows you to have phyiscal output via ALSA, as well as sending the audio to an icecast server.
 
