@@ -11,7 +11,7 @@ playlist_c = playlist(id="C List", mime_type="audio/x-scpls", "#{base_url}/api/p
 playlist_sue = playlist(id="SUE List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{sue_list}&format=pls", reload=3600)
 jingles = playlist(id="Jingles", mime_type="audio/x-scpls", "#{base_url}/api/playlist/jingles?key=#{api_key}&format=pls", reload=3600)
 # Offset parameter in the URL means we'll get the playlist for the NEXT hour
-prerecord = playlist(id="Prerec", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
+prerecord = playlist(id="Prerec", mime_type="audio/x-scpls", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
 
 # Log the tracks metadata, m is an associative array
 def log_track(m) =
