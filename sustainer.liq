@@ -53,14 +53,17 @@ def ob_auth(username, password) =
     response = list.hd(default="", response)
 
     if response == "VALID" then
-        status, headers, data = http.get("#{base_url}/api/permission?key=#{api_key}&username=#{username}")
+        response = http.get("#{base_url}/api/permission?key=#{api_key}&username=#{username}")
 
-        if data == "True" then
+        # Data returned
+        if snd(response) == "True" then
             true
+        else
+            false
+        end
+    else
+        false
     end
-
-    # Return false if all the checks fail
-    false   
 end
 
 # Outside Broadcast harbor stream, using Icecast protocol
