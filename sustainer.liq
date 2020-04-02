@@ -5,11 +5,11 @@
 set("log.stdout", true)
 
 # Load in all the playlists that we will need
-playlist_a = playlist(id="A List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{a_list}&format=pls", reload=3600)
-playlist_b = playlist(id="B List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{b_list}&format=pls", reload=3600)
-playlist_c = playlist(id="C List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{c_list}&format=pls", reload=3600)
-playlist_sue = playlist(id="SUE List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{sue_list}&format=pls", reload=3600)
-jingles = playlist(id="Jingles", mime_type="audio/x-scpls", "#{base_url}/api/playlist/jingles?key=#{api_key}&format=pls", reload=3600)
+playlist_a = playlist(id="A List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{a_list}&format=pls")
+playlist_b = playlist(id="B List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{b_list}&format=pls")
+playlist_c = playlist(id="C List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{c_list}&format=pls")
+playlist_sue = playlist(id="SUE List", mime_type="audio/x-scpls", "#{base_url}/api/playlist?key=#{api_key}&id=#{sue_list}&format=pls")
+jingles = playlist(id="Jingles", mime_type="audio/x-scpls", "#{base_url}/api/playlist/jingles?key=#{api_key}&format=pls")
 # Offset parameter in the URL means we'll get the playlist for the NEXT hour
 prerecord = playlist(id="Prerec", mime_type="audio/x-scpls", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
 
