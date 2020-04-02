@@ -14,39 +14,20 @@ jingles = playlist(id="Jingles", mime_type="audio/x-scpls", "#{base_url}/api/pla
 prerecord = playlist(id="Prerec", mime_type="audio/x-scpls", "#{base_url}/api/playlist/sustainer?key=#{api_key}&offset=1", reload=1200)
 
 # Log the tracks metadata, m is an associative array
-def log_track(m) =
-    title = m["title"]
-    artist = m["artist"]
-    
-    # Send a post request to our lovely server
-    result = http.post(headers=[("Content-Type","application/x-www-form-urlencoded")], data="title=#{title}&artist=#{artist}&location=0", "#{base_url}/api/log?key=#{api_key}")
-    
-    # log the result and say what is playing
-    log(label="normal", "NOW PLAYING: #{artist} - #{title}")
-    log(label="normal", "LOG POST: #{snd(result)}")
+def log_track(artist, title) =
+    if artist == "" or title == "" then
+        false
+    else
+        # Send a post request to our lovely server
+        result = http.post(headers=[("Content-Type","application/x-www-form-urlencoded")], data="title=#{title}&artist=#{artist}&location=0", "#{base_url}/api/log?key=#{api_key}")
+        
+        # log the result and say what is playing
+        log(label="log", "NOW PLAYING: #{artist} - #{title}")
+        log(label="log", "LOG POST: #{snd(result)}")
+
+        true
+    end
 end
-
-
-
-# Weight/ratios are pulled from the config file
-playlists = random(weights=[a_weight, b_weight, c_weight, sue_weight], [playlist_a, playlist_b, playlist_c, playlist_sue])
-# Add logging handle
-playlists = on_metadata(log_track, playlists)
-# Add a smart crossfade
-# NOTE: Disabled as, for some reason, it stops jingles from playing
-# playlists = smart_crossfade(width=3.0, high=-5.0, medium=-20.0, playlists)
-
-# Every 2 songs we'll play one jingle
-main_feed = rotate(weights=[2,1], [playlists, jingles])
-# Add the emergency track (TODO: when i can figure out the weird issues with it)
-main_feed = fallback(track_sensitive=false, [main_feed, blank()])
-
-# This will add our precord, if one exists in the playlist
-# This runs at the start of every hour, it will override any currently
-# Playing prerecord or song
-prerecord' = switch([
-    ({0m0s}, prerecord)
-])
 
 def ob_auth(username, password) =
     response = get_process_lines("cd #{directory} && python3 authenticate_user.py -u #{username} -p #{password}")
@@ -72,8 +53,46 @@ def ob_auth(username, password) =
     end
 end
 
+def ob_metadata(m) =
+    line = snd(list.hd(default=("",""), m))
+    split = string.split(seperator=" % ", line)
+    
+    artist = list.nt(default="", split, 0)
+    title = list.nth(default="", split, 1)
+
+    ignore(log_track(artist, title))
+end
+
+def playlist_metadata(m) =
+    artist = m["artist"]
+    title = m["title"]
+
+    ignore(log_track(artist, title))
+end
+
+# Weight/ratios are pulled from the config file
+playlists = random(weights=[a_weight, b_weight, c_weight, sue_weight], [playlist_a, playlist_b, playlist_c, playlist_sue])
+# Add logging handle
+playlists = on_metadata(playlist_metadata, playlists)
+# Add a smart crossfade
+# NOTE: Disabled as, for some reason, it stops jingles from playing
+# playlists = smart_crossfade(width=3.0, high=-5.0, medium=-20.0, playlists)
+
+# Every 2 songs we'll play one jingle
+main_feed = rotate(weights=[2,1], [playlists, jingles])
+# Add the emergency track (TODO: when i can figure out the weird issues with it)
+main_feed = fallback(track_sensitive=false, [main_feed, blank()])
+
+# This will add our precord, if one exists in the playlist
+# This runs at the start of every hour, it will override any currently
+# Playing prerecord or song
+prerecord' = switch([
+    ({0m0s}, prerecord)
+])
+
 # Outside Broadcast harbor stream, using Icecast protocol
 ob = input.harbor(harbor_mountpoint, port=harbor_port, auth=ob_auth, icy=true)
+ob = on_metadata(ob_metadata, ob)
 
 # First a prerecord will be played (if there is one)
 # Then the normal sue service `added_jingles`
