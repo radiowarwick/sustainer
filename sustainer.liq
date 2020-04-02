@@ -49,19 +49,25 @@ prerecord' = switch([
 ])
 
 def ob_auth(username, password) =
-    response = get_process_lines("python3 authenticate_user.py --username #{username} --password #{password}")
-    response = list.hd(default="", response)
+    response = get_process_lines("cd #{directory} && python3 authenticate_user.py -u #{username} -p #{password}")
+    data = list.hd(default="", response)
 
-    if response == "VALID" then
+    log(label="OB", "OB login attempt from #{username} - #{data}")
+
+    if data == "VALID" then
+        log(label="OB", "Authentication passed")
         response = http.get("#{base_url}/api/permission?key=#{api_key}&username=#{username}")
 
         # Data returned
         if snd(response) == "True" then
+            log(label="OB", "User allowed to stream. Connecting them to output")
             true
         else
+            log(label="OB", "User does not have permission to stream")
             false
         end
     else
+        log(label="OB", "User failed authentication")
         false
     end
 end

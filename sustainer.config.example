@@ -34,3 +34,6 @@ enable_flac = true
 # Physical output
 output_alsa = true
 output_jack = false
+
+# Install directory
+directory = "/usr/local/share/sustainer"
