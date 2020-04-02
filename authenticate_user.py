@@ -5,7 +5,7 @@ import sys
 # Setup the argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--username", help="Username", required=True)
-parser.add_argument("-p", "--password", help="Password", required=False)
+parser.add_argument("-p", "--password", help="Password", required=True)
 args = parser.parse_args()
 
 # Initialize our LDAP connection
