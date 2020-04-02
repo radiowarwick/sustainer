@@ -49,7 +49,18 @@ prerecord' = switch([
 ])
 
 def ob_auth(username, password) =
-    (username == harbor_username) and (password == harbor_password)
+    response = get_process_lines("python3 authenticate_user.py --username #{username} --password #{password}")
+    response = list.hd(default="", response)
+
+    if response == "VALID" then
+        status, headers, data = http.get("#{base_url}/api/permission?key=#{api_key}&username=#{username}")
+
+        if data == "True" then
+            true
+    end
+
+    # Return false if all the checks fail
+    false   
 end
 
 # Outside Broadcast harbor stream, using Icecast protocol
